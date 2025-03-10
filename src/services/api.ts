@@ -5,10 +5,24 @@ const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   withCredentials: true, // 允许跨域请求携带 cookie
   headers: {
-    'X-Requested-With': 'XMLHttpRequest',  // 添加这个头部
-    'Accept': 'application/json'  // 添加这个头部
+    'X-Requested-With': 'XMLHttpRequest',
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
   }
 })
+
+// 请求拦截器
+api.interceptors.request.use(
+  config => {
+    // 确保请求头包含正确的配置
+    config.headers['X-Requested-With'] = 'XMLHttpRequest'
+    config.headers['Accept'] = 'application/json'
+    return config
+  },
+  error => {
+    return Promise.reject(error)
+  }
+)
 
 // 响应拦截器
 api.interceptors.response.use(
@@ -42,14 +56,28 @@ api.interceptors.response.use(
 )
 
 export const getServerInfo = () => api.get('/')
-export const getCsrfCookie = () => api.get('/csrf-cookie')
+export const getCsrfCookie = () => api.get('/csrf-cookie', {
+  withCredentials: true,
+  headers: {
+    'Access-Control-Allow-Credentials': 'true'
+  }
+})
 export const login = async (credentials: { email: string; password: string }) => {
   // 先获取 CSRF cookie
   await getCsrfCookie()
   // 然后进行登录
-  return api.post('/login', credentials)
+  return api.post('/login', credentials, {
+    withCredentials: true,
+    headers: {
+      'Access-Control-Allow-Credentials': 'true'
+    }
+  })
 }
-export const logout = () => api.post('/logout')
-export const getUserInfo = () => api.get('/api/user')
+export const logout = () => api.post('/logout', {}, {
+  withCredentials: true
+})
+export const getUserInfo = () => api.get('/api/user', {
+  withCredentials: true
+})
 
 export default api 
