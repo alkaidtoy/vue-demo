@@ -24,7 +24,7 @@ const router = createRouter({
 // 路由守卫
 router.beforeEach((
   to: RouteLocationNormalized,
-  from: RouteLocationNormalized,
+  _from: RouteLocationNormalized,
   next: NavigationGuardNext
 ) => {
   if (to.meta.requiresAuth) {
