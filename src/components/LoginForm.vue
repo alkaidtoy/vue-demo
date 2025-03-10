@@ -42,8 +42,8 @@ const loading = ref(false)
 const error = ref('')
 
 const form = reactive({
-  email: '',
-  password: ''
+  email: 'test@example.com',
+  password: 'password'
 })
 
 const handleSubmit = async () => {

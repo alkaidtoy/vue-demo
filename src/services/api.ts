@@ -1,8 +1,12 @@
 import axios from 'axios'
 import router from '@/router'
 
+const baseURL = process.env.NODE_ENV === 'production' 
+  ? import.meta.env.VITE_API_BASE_URL  // 生产环境使用 Worker URL
+  : '/apis'  // 开发环境使用代理
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL,
   withCredentials: true, // 允许跨域请求携带 cookie
   headers: {
     'X-Requested-With': 'XMLHttpRequest',
@@ -14,18 +18,14 @@ const api = axios.create({
 
 // 请求拦截器
 api.interceptors.request.use(
-  config => {
-    // 从 cookie 中获取 XSRF-TOKEN
-    const token = document.cookie
-      .split('; ')
-      .find(row => row.startsWith('XSRF-TOKEN='))
-      ?.split('=')[1]
-    
-    if (token) {
-      // 解码 cookie 值
-      const decodedToken = decodeURIComponent(token)
-      // 设置 X-XSRF-TOKEN 头
-      config.headers['X-XSRF-TOKEN'] = decodedToken
+  async config => {
+    // 对于登录请求，先获取 CSRF token
+    if (config.url === '/login') {
+      try {
+        await getCsrfCookie()
+      } catch (error) {
+        console.error('获取 CSRF token 失败:', error)
+      }
     }
     return config
   },
@@ -72,10 +72,11 @@ export const getCsrfCookie = () => api.get('/csrf-cookie', {
     'Access-Control-Allow-Credentials': 'true'
   }
 })
-export const login = async (credentials: { email: string; password: string }) => {
-  // 先获取 CSRF cookie
-  await getCsrfCookie()
-  // 然后进行登录
+export const login = (credentials: { email: string; password: string }) => {
+  console.log(credentials)
+  console.log(import.meta.env.VITE_API_BASE_URL)
+  console.log(document.cookie,'document.cookie')
+  // 直接发送登录请求，拦截器会处理 CSRF token
   return api.post('/login', credentials)
 }
 export const logout = () => api.post('/logout', {}, {
