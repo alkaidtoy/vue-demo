@@ -64,14 +64,15 @@ export const getCsrfCookie = () => api.get('/csrf-cookie', {
 })
 export const login = async (credentials: { email: string; password: string }) => {
   // 先获取 CSRF cookie
-  await getCsrfCookie()
-  // 然后进行登录
+  getCsrfCookie().then(() => {
+    // 然后进行登录
   return api.post('/login', credentials, {
     withCredentials: true,
     headers: {
       'Access-Control-Allow-Credentials': 'true'
     }
   })
+  })  
 }
 export const logout = () => api.post('/logout', {}, {
   withCredentials: true
