@@ -35,9 +35,9 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { login } from '@/services/api'
-import { useRouter } from 'vue-router'
+// import { useRouter } from 'vue-router'
 
-const router = useRouter()
+// const router = useRouter()
 const loading = ref(false)
 const error = ref('')
 
