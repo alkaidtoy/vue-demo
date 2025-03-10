@@ -52,7 +52,7 @@ const handleSubmit = async () => {
     error.value = ''
     
     await login(form)
-    router.push('/dashboard')
+    // router.push('/dashboard')
   } catch (err: any) {
     error.value = err.response?.data?.message || '登录失败'
     console.error('登录失败：', err)

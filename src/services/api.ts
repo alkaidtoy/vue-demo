@@ -11,12 +11,22 @@ const api = axios.create({
   }
 })
 
+
 // 请求拦截器
 api.interceptors.request.use(
   config => {
-    // 确保请求头包含正确的配置
-    config.headers['X-Requested-With'] = 'XMLHttpRequest'
-    config.headers['Accept'] = 'application/json'
+    // 从 cookie 中获取 XSRF-TOKEN
+    const token = document.cookie
+      .split('; ')
+      .find(row => row.startsWith('XSRF-TOKEN='))
+      ?.split('=')[1]
+    
+    if (token) {
+      // 解码 cookie 值
+      const decodedToken = decodeURIComponent(token)
+      // 设置 X-XSRF-TOKEN 头
+      config.headers['X-XSRF-TOKEN'] = decodedToken
+    }
     return config
   },
   error => {
@@ -64,15 +74,9 @@ export const getCsrfCookie = () => api.get('/csrf-cookie', {
 })
 export const login = async (credentials: { email: string; password: string }) => {
   // 先获取 CSRF cookie
-  getCsrfCookie().then(() => {
-    // 然后进行登录
-  return api.post('/login', credentials, {
-    withCredentials: true,
-    headers: {
-      'Access-Control-Allow-Credentials': 'true'
-    }
-  })
-  })  
+  await getCsrfCookie()
+  // 然后进行登录
+  return api.post('/login', credentials)
 }
 export const logout = () => api.post('/logout', {}, {
   withCredentials: true
