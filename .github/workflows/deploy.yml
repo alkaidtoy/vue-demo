@@ -27,7 +27,7 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          VITE_API_BASE_URL: https://dev.178778.xyz/'
+          VITE_API_BASE_URL: https://dev.178778.xyz/
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4

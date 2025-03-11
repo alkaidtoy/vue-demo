@@ -19,12 +19,12 @@ export default defineConfig({
       cert: fs.readFileSync(path.resolve(__dirname, '.cert/cert.pem')),
     },
     proxy: {
-      // '/csrf-cookie': {
-      //   target: 'https://dev.178778.xyz',
-      //   changeOrigin: true,
-      //   secure: false,
-      //   xfwd: true
-      // },      
+      '/csrf-cookie': {
+        target: 'https://dev.178778.xyz',
+        changeOrigin: true,
+        secure: false,
+        xfwd: true
+      },      
       '/apis': {
         target: 'https://dev.178778.xyz',
         changeOrigin: true,
