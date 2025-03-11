@@ -35,9 +35,9 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { login } from '@/services/api'
-// import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 
-// const router = useRouter()
+const router = useRouter()
 const loading = ref(false)
 const error = ref('')
 
@@ -51,8 +51,9 @@ const handleSubmit = async () => {
     loading.value = true
     error.value = ''
     
-    await login(form)
-    // router.push('/dashboard')
+    const res = await login(form)
+    console.log(res)
+    if(res.status === 200) router.push('/dashboard')
   } catch (err: any) {
     error.value = err.response?.data?.message || '登录失败'
     console.error('登录失败：', err)
