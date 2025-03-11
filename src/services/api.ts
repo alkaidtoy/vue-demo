@@ -4,7 +4,7 @@ import router from '@/router'
 const baseURL = process.env.NODE_ENV === 'production' 
   ? import.meta.env.VITE_API_BASE_URL  // 生产环境使用 Worker URL
   : '/apis'  // 开发环境使用代理
-
+axios.defaults.withCredentials = true
 const api = axios.create({
   baseURL,
   withCredentials: true, // 允许跨域请求携带 cookie
